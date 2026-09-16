@@ -197,6 +197,12 @@ pub fn fan_curve_pct(temp_c: f64, steps: &[u8; 6]) -> u8 {
     steps[5]
 }
 
+/// A saved software curve must never override an explicit Maximum preset,
+/// including one selected through the physical Predator/Turbo key.
+pub fn software_curve_allowed(current_mode: Option<FanMode>) -> bool {
+    current_mode != Some(FanMode::Max)
+}
+
 /// Read current CPU/GPU fan PWM as percentage (0-100), if available.
 pub fn get_pwm_percent() -> Option<(u8, u8)> {
     let cpu: u16 = crate::hardware::helper::read(HelperAction::PwmCpuRead)?
